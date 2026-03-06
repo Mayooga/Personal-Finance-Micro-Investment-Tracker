@@ -1,4 +1,4 @@
-# Finance Tracker - Full Stack Project
+# Finance Tracker - DBMS Project
 
 A Flask-based web application for tracking expenses, budgets, and investments with MySQL database.
 
