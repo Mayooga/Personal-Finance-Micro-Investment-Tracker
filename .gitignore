@@ -1,0 +1,34 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database and config files with sensitive data
+config.py
+*.env
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Local database files
+*.db
+*.sqlite
