@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Investments</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount Invested (₹)</th>
+            <th>Current Value (₹)</th>
+            <th>Risk Level</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for inv in investments %}
+        <tr>
+            <td>{{ inv.investment_date }}</td>
+            <td>{{ inv.invested_type }}</td>
+            <td>₹{{ inv.amount_invested }}</td>
+            <td>₹{{ inv.current_value }}</td>
+            <td>{{ inv.risk_level }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5">No investments yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('add_investment') }}">Add Investment</a>
+{% endblock %}

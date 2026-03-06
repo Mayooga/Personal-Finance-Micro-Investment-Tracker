@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Budgets</h2>
+<a href="{{ url_for('add_budget') }}" class="btn">Add New Budget</a>
+
+<div class="budgets-list">
+    {% for b in budgets %}
+    <div class="budget-card">
+        <div class="budget-header">
+            <h3>{{ b.category }}</h3>
+            <span class="budget-period">{{ b.start_date }} to {{ b.end_date }}</span>
+        </div>
+        
+        <div class="budget-stats">
+            <div class="stat">
+                <label>Budget Limit:</label>
+                <strong>₹{{ b.limit_amount }}</strong>
+            </div>
+            <div class="stat">
+                <label>Spent:</label>
+                <strong>₹{{ b.spent }}</strong>
+            </div>
+            <div class="stat">
+                <label>Remaining:</label>
+                <strong class="{% if b.remaining < 0 %}negative{% elif b.remaining < (b.limit_amount * 0.1) %}warning{% else %}positive{% endif %}">
+                    ₹{{ b.remaining }}
+                </strong>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" 
+                     style="width: {{ b.percentage }}%; 
+                            background-color: {% if b.percentage >= 100 %}red{% elif b.percentage >= 90 %}orange{% elif b.percentage >= 75 %}yellow{% else %}green{% endif %};">
+                    {{ "%.1f"|format(b.percentage) }}%
+                </div>
+            </div>
+            <p class="progress-text">
+                {% if b.percentage >= 100 %}
+                    ⚠️ Budget Exceeded by ₹{{ (b.spent - b.limit_amount) }}
+                {% elif b.percentage >= 90 %}
+                    ⚠️ Warning: Almost at budget limit
+                {% elif b.percentage >= 75 %}
+                    💡 You've used {{ "%.1f"|format(b.percentage) }}% of your budget
+                {% else %}
+                    ✅ On track - {{ "%.1f"|format(100 - b.percentage) }}% remaining
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No budgets yet. <a href="{{ url_for('add_budget') }}">Create your first budget</a> to start tracking your spending!</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

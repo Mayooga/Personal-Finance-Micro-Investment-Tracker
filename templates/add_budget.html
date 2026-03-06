@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Budget</h2>
+<form method="post">
+    <label>Category</label>
+<select name="category" required>
+    <option value="">-- Select Category --</option>
+    {% for c in categories %}
+    <option value="{{ c.name }}">{{ c.name }}</option>
+    {% endfor %}
+</select>
+
+   <label>Start Date</label>
+<input id="start_date" name="start_date" type="date" required>
+
+<label>End Date</label>
+<input id="end_date" name="end_date" type="date" required>
+
+    <label>Limit Amount (₹)</label><input name="limit_amount" type="number" step="0.01" required>
+    <button type="submit">Save Budget</button>
+</form>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const start = document.getElementById('start_date');
+  const end = document.getElementById('end_date');
+  if(!start || !end) return;
+  start.addEventListener('change', () => {
+    end.min = start.value;
+    if(end.value && end.value < start.value) end.value = start.value;
+  });
+});
+</script>
+
+{% endblock %}

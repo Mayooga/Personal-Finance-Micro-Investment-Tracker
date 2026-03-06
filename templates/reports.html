@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Monthly Expense Reports</h2>
+
+<!-- CURRENT MONTH BREAKDOWN -->
+{% if current_month_breakdown %}
+<h3>Current Month ({{ current_month }}) - Category Breakdown</h3>
+<div class="category-breakdown">
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Amount (₹)</th>
+                <th>Count</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in current_month_breakdown %}
+            <tr>
+                <td>{{ cat.category or 'Uncategorized' }}</td>
+                <td>₹{{ cat.category_total }}</td>
+                <td>{{ cat.category_count }}</td>
+                <td>{{ "%.1f"|format(cat.percentage or 0) }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<!-- MONTHLY SUMMARY -->
+<h3>Monthly Expense Summary (Last 12 Months)</h3>
+<div class="monthly-reports">
+    {% for month in monthly_summary %}
+    <div class="month-card">
+        <div class="month-header">
+            <h4>{{ month.month_name }}</h4>
+            <span class="month-total">₹{{ month.total_expense }}</span>
+        </div>
+        <p class="expense-count">{{ month.expense_count }} expenses</p>
+        
+        {% if month.categories %}
+        <details>
+            <summary>View Category Breakdown</summary>
+            <table class="category-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Amount</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cat in month.categories %}
+                    <tr>
+                        <td>{{ cat.category or 'Uncategorized' }}</td>
+                        <td>₹{{ cat.category_total }}</td>
+                        <td>{{ cat.category_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </details>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No expense data available. Start adding expenses to see your reports!</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

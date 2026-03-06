@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Investment</h2>
+<form method="POST">
+    <label>Investment Type:</label>
+    <input type="text" name="invested_type" required>
+
+    <label>Amount Invested (₹):</label>
+    <input type="number" step="0.01" name="amount" required>
+
+    <label>Investment Date</label>
+<input name="invest_date" type="date" max="{{ today }}" required>
+
+
+    <label>Current Value (₹):</label>
+    <input type="number" step="0.01" name="current_value">
+
+    <label>Risk Level:</label>
+    <select name="risk_level">
+        <option value="Low">Low</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="High">High</option>
+    </select>
+
+    <button type="submit">Add Investment</button>
+</form>
+{% endblock %}

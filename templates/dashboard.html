@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+<p>Hello, {{ session.name }}!</p>
+
+<!-- NOTIFICATIONS -->
+{% if notifications %}
+<h3>📢 Notifications</h3>
+<div class="notifications">
+    {% for notif in notifications %}
+    <div class="notification-card {% if notif.notification_type == 'budget_exceeded' %}alert-danger{% elif notif.notification_type == 'budget_warning' %}alert-warning{% else %}alert-info{% endif %}">
+        <p>{{ notif.message }}</p>
+        <small>{{ notif.created_at }}</small>
+        <a href="{{ url_for('mark_notification_read', notification_id=notif.notification_id) }}" class="btn-small">Mark as Read</a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- SUMMARY CARDS -->
+<div class="cards">
+    <div class="card">
+        <h3>Total Expenses</h3>
+        <p>₹{{ total_expense }}</p>
+    </div>
+
+    <div class="card">
+        <h3>Total Investments</h3>
+        <p>₹{{ total_invest }}</p>
+    </div>
+</div>
+
+<!-- MONTHLY SUMMARY -->
+<h3>Monthly Summary</h3>
+<div class="card">
+    <p><strong>Total Spending This Month:</strong> ₹{{ monthly_expense }}</p>
+    <p><strong>Total Suggested Investment This Month (from daily suggestions):</strong> ₹{{ monthly_suggested }}</p>
+</div>
+
+<!-- ACTIVE BUDGETS STATUS -->
+{% if active_budgets %}
+<h3>Active Budgets Status</h3>
+<div class="budget-status">
+    {% for budget in active_budgets %}
+    <div class="budget-card">
+        <h4>{{ budget.category }}</h4>
+        <p>Limit: ₹{{ budget.limit_amount }} | Spent: ₹{{ budget.spent }} | Remaining: ₹{{ (budget.limit_amount - budget.spent) }}</p>
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: {{ ((budget.spent / budget.limit_amount) * 100) if budget.limit_amount > 0 else 0 }}%; 
+                 background-color: {% if (budget.spent / budget.limit_amount) >= 1 %}red{% elif (budget.spent / budget.limit_amount) >= 0.9 %}orange{% elif (budget.spent / budget.limit_amount) >= 0.75 %}yellow{% else %}green{% endif %};">
+                {{ "%.1f"|format((budget.spent / budget.limit_amount * 100) if budget.limit_amount > 0 else 0) }}%
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- MONTHLY INVESTMENT SUGGESTIONS -->
+<h3>Monthly Investment Suggestions</h3>
+{% if monthly_suggestions %}
+<div class="monthly-suggestions">
+    {% for ms in monthly_suggestions %}
+    <div class="suggestion-month-card">
+        <div class="suggestion-month-header">
+            <h4>{{ ms.month_name }}</h4>
+            <span class="suggestion-total">₹{{ "%.2f"|format(ms.total_suggested) }}</span>
+        </div>
+        <div class="suggestion-details">
+            <p><strong>Total Suggested:</strong> ₹{{ "%.2f"|format(ms.total_suggested) }}</p>
+            <p><strong>Daily Suggestions:</strong> {{ ms.suggestion_count }}</p>
+            <p><strong>Types:</strong> {{ ms.investment_types }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="empty-message">No monthly suggestions yet. Add expenses to get investment suggestions!</p>
+{% endif %}
+
+<!-- RECENT DAILY SUGGESTIONS -->
+<h3>Recent Daily Suggestions</h3>
+<table class="modern-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount (₹)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in recent_suggestions %}
+        <tr>
+            <td>{{ s.suggested_date }}</td>
+            <td>{{ s.suggested_investment_type }}</td>
+            <td>₹{{ s.suggested_amount }}</td>
+            <td>
+                <span class="status-badge status-{{ s.status|lower }}">{{ s.status }}</span>
+                {% if s.status == 'Pending' %}
+                <a href="{{ url_for('mark_suggestion_complete', suggestion_id=s.suggestion_id) }}" 
+                   class="btn-small" 
+                   style="margin-left: 10px;">Mark Done</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" class="empty-cell">No suggestions yet. Add expenses to get daily investment suggestions!</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- LINKS -->
+<p>
+    <a href="{{ url_for('add_expense') }}">Add Expense</a> |
+    <a href="{{ url_for('add_investment') }}">Add Investment</a> |
+    <a href="{{ url_for('add_budget') }}">Add Budget</a> |
+    <a href="{{ url_for('reports') }}">View Reports</a>
+</p>
+
+{% endblock %}
